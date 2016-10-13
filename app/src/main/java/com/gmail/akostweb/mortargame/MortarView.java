@@ -118,11 +118,11 @@ public class MortarView extends SurfaceView implements SurfaceHolder.Callback {
         super.onSizeChanged(w, h, oldw, oldh);
         screenWidth = w;
         screenHeight = h;
-        mortarBaseRadius = h / 18;
+        mortarBaseRadius = h / 22;
 
-        mortarLength = w / 7;
+        mortarLength = w / 8;
         mortarBallRadius = w / 36;
-        mortarSpeed = w / 2;
+        mortarSpeed = w ;
 
         lineWidth = w / 24;
         blockerDistance = w * 5 / 8;
@@ -182,7 +182,7 @@ public class MortarView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void updatePositions(double elapsedTimeMS){
-        double interval = elapsedTimeMS / 1000.0;
+        double interval = elapsedTimeMS / 1500.0;
         if (mortarBallOnScreen){
             mortarBall.x += interval * mortarVelocityX;
             mortarBall.y += interval * mortarVelocityY;
@@ -288,7 +288,8 @@ public class MortarView extends SurfaceView implements SurfaceHolder.Callback {
 
         canvas.drawLine(0, screenHeight / 2, barrelEnd.x, barrelEnd.y, mortarPaint);
 
-        canvas.drawCircle(0, screenHeight / 2, mortarBaseRadius, mortarPaint);
+        canvas.drawCircle(0, screenHeight / 1.9f, mortarBaseRadius, mortarPaint);
+        canvas.drawCircle(0, screenHeight / 2.1f, mortarBaseRadius, mortarPaint);
 
         canvas.drawLine(blocker.start.x, blocker.start.y, blocker.end.x, blocker.end.y, blockerPaint);
 

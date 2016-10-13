@@ -3,11 +3,11 @@ package com.gmail.akostweb.mortargame;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Layout;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
+
 
 /**
  * Created by Администратор on 05.10.2016.
@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 public class MortarGameFragment extends Fragment
 {
     private MortarView mortarView; // custom view to display the game
+
 
 
     @Override
