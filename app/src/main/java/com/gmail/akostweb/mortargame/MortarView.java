@@ -11,7 +11,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
@@ -53,9 +52,16 @@ public class MortarView extends SurfaceView implements SurfaceHolder.Callback {
     private int targetEnd;
     private int initialTargetVelocity;
     private float targetVelocity;
+    private float target1Velocity;
+    private Line target1;
+    private int targetDistance1;
+    private int targetBeginning1;
+    private int targetEnd1;
+
 
     private int lineWidth;
     private boolean[] hitStates;
+    private boolean[] hitStates1;
     private int targetPieceHit;
 
     private Point mortarBall;
@@ -81,6 +87,7 @@ public class MortarView extends SurfaceView implements SurfaceHolder.Callback {
     private Paint mortarPaint;
     private Paint blockerPaint;
     private Paint targetPaint;
+    private Paint targetPaint1;
     private Paint backGroundPaint;
 
 
@@ -93,9 +100,11 @@ public class MortarView extends SurfaceView implements SurfaceHolder.Callback {
 
         blocker = new Line();
         target = new Line();
+        target1 = new Line();
         mortarBall = new Point();
 
         hitStates = new boolean[TARGET_PIECES];
+        hitStates1 = new boolean[TARGET_PIECES];
 
         soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
         activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
@@ -110,6 +119,7 @@ public class MortarView extends SurfaceView implements SurfaceHolder.Callback {
         mortarBallPaint = new Paint();
         blockerPaint = new Paint();
         targetPaint = new Paint();
+        targetPaint1 = new Paint();
         backGroundPaint = new Paint();
     }
 
@@ -133,13 +143,20 @@ public class MortarView extends SurfaceView implements SurfaceHolder.Callback {
         blocker.end = new Point(blockerDistance, blockerEnd);
 
         targetDistance = w * 7 / 8;
-        targetBeginning = h / 9;
+        targetBeginning = h / 8;
 
         targetEnd = h * 7 / 8;
         pieceLength = (targetEnd - targetBeginning) / TARGET_PIECES;
-        initialTargetVelocity = h / 4;
+        initialTargetVelocity = -h / 4;
         target.start = new Point(targetDistance, targetBeginning);
         target.end = new Point(targetDistance, targetEnd);
+
+        targetDistance1 = w * 6 / 8;
+        targetBeginning1 = h / 8;
+
+        targetEnd1 = h * 7 / 8;
+        target1.start = new Point(targetDistance1, targetBeginning1);
+        target1.end = new Point(targetDistance1, targetEnd1);
 
         barrelEnd = new Point(mortarLength, h / 2);
 
@@ -151,19 +168,35 @@ public class MortarView extends SurfaceView implements SurfaceHolder.Callback {
         blockerPaint.setColor(Color.RED);
         mortarBallPaint.setColor(Color.DKGRAY);
         targetPaint.setStrokeWidth(lineWidth);
+        targetPaint1.setStrokeWidth(lineWidth);
         backGroundPaint.setColor(Color.WHITE);
-        mortarBallPaint.setColor(Color.DKGRAY);
 
         newGame();
     }
 
     public void newGame() {
-        for (int i = 0; i < TARGET_PIECES; i++)
-            hitStates[i] = false;
+        for (int i = 0; i < TARGET_PIECES; i++){
+            if (i%2 == 0) {
+                hitStates[i] = false;
+            } else {
+                hitStates[i] = true;
+            }
+
+        }
+
+        for (int j = 0; j < TARGET_PIECES; j++){
+            if (j%2 == 0){
+                hitStates1[j] = true;
+            } else {
+                hitStates1[j] = false;
+            }
+        }
+
 
         targetPieceHit = 0;
         blockerVelocity = initialBlockerVelocity;
         targetVelocity = initialTargetVelocity;
+        target1Velocity = initialTargetVelocity;
         timeLeft = 50;
         mortarBallOnScreen = false;
         shotsFired = 0;
@@ -173,6 +206,8 @@ public class MortarView extends SurfaceView implements SurfaceHolder.Callback {
         blocker.end.set(blockerDistance, blockerEnd);
         target.start.set(targetDistance, targetBeginning);
         target.end.set(targetDistance, targetEnd);
+        target1.start.set(targetDistance1, targetBeginning1);
+        target1.end.set(targetDistance1, targetEnd1);
 
         if (gameOver) {
             gameOver = false;
@@ -192,7 +227,6 @@ public class MortarView extends SurfaceView implements SurfaceHolder.Callback {
                     mortarBall.y - mortarBallRadius < blocker.end.y){
                 mortarVelocityX *= -1;
                 timeLeft -=MISS_PENALTY;
-                soundPool.play(soundMap.get(TARGET_SOUND_ID), 1, 1, 1, 0, 1f);
                 soundPool.play(soundMap.get(BLOCKER_SOUND_ID), 1, 1, 1, 0, 1f);
             } else if (mortarBall.x + mortarBallRadius > screenWidth ||
                     mortarBall.x - mortarBallRadius < 0){
@@ -206,7 +240,8 @@ public class MortarView extends SurfaceView implements SurfaceHolder.Callback {
                     mortarBall.y - mortarBallRadius < target.end.y){
                 int section = (int) ((mortarBall.y - target.start.y) / pieceLength);
 
-                if ((section>= 0 &&section < TARGET_PIECES) && !hitStates[section]){
+
+                if (((section>= 0 && section < TARGET_PIECES ) && !hitStates[section])){
                     hitStates[section] = true;
                     mortarBallOnScreen = false;
                     timeLeft += HIT_REWARD;
@@ -218,6 +253,29 @@ public class MortarView extends SurfaceView implements SurfaceHolder.Callback {
                         gameOver = true;
                     }
                 }
+            } else if ((mortarBall.x + mortarBallRadius > targetDistance1 &&
+                    mortarBall.x - mortarBallRadius < targetDistance1 &&
+                    mortarBall.y + mortarBallRadius > target1.start.y &&
+                    mortarBall.y - mortarBallRadius < target1.end.y)){
+
+                int section1 = (int) ((mortarBall.y - target1.start.y) / pieceLength);
+
+
+                if ((section1 < TARGET_PIECES && section1 >= 0) && !hitStates1[section1] ){
+
+                    hitStates1[section1] = true;
+                    mortarBallOnScreen = false;
+                    timeLeft += HIT_REWARD;
+                    soundPool.play(soundMap.get(TARGET_SOUND_ID), 1, 1, 1, 0, 1f);
+
+                    if (++targetPieceHit == TARGET_PIECES){
+                        mortarThread.setRunning(false);
+                        showGameOverDialog(R.string.win);
+                        gameOver = true;
+                    }
+
+                }
+
             }
 
 
@@ -230,10 +288,16 @@ public class MortarView extends SurfaceView implements SurfaceHolder.Callback {
         target.start.y +=targetUpdate;
         target.end.y += targetUpdate;
 
+        double target1Update = interval * target1Velocity;
+        target1.start.y +=target1Update;
+        target1.end.y +=target1Update;
+
         if (blocker.start.y < 0 || blocker.end.y > screenHeight)
             blockerVelocity *= - 1;
         if (target.start.y < 0 || target.end.y > screenHeight)
             targetVelocity *= -1;
+        if (target1.start.y < 0 || target1.end.y > screenHeight)
+            target1Velocity *= -1;
         timeLeft -= interval;
 
         if (timeLeft <= 0.0){
@@ -294,6 +358,10 @@ public class MortarView extends SurfaceView implements SurfaceHolder.Callback {
         canvas.drawLine(blocker.start.x, blocker.start.y, blocker.end.x, blocker.end.y, blockerPaint);
 
         Point currentPoint = new Point();
+        Point current1Point = new Point();
+
+        current1Point.x = target1.start.x;
+        current1Point.y = target1.start.y;
 
         currentPoint.x = target.start.x;
         currentPoint.y = target.start.y;
@@ -310,6 +378,13 @@ public class MortarView extends SurfaceView implements SurfaceHolder.Callback {
 
             }
             currentPoint.y +=pieceLength;
+        }
+        for (int j = 0; j < TARGET_PIECES; j++){
+            if (!hitStates1[j]){
+                    targetPaint1.setColor(Color.BLUE);
+                    canvas.drawLine(current1Point.x, current1Point.y, target1.end.x, (int) (current1Point.y + pieceLength), targetPaint1);
+            }
+            current1Point.y +=pieceLength;
         }
     }
 
