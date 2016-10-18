@@ -300,12 +300,14 @@ public class MortarView extends SurfaceView implements SurfaceHolder.Callback {
 
         for (int i = 0; i < TARGET_PIECES; i++) {
             if (!hitStates[i]){
-                if (i % 2 != 0 )
+                if (i % 2 != 0 ){
                     targetPaint.setColor(Color.BLUE);
-                else
+                    canvas.drawLine(currentPoint.x, currentPoint.y, target.end.x, (int) (currentPoint.y + pieceLength), targetPaint);
+                } else {
                     targetPaint.setColor(Color.YELLOW);
+                    canvas.drawLine(currentPoint.x, currentPoint.y, target.end.x, (int) (currentPoint.y + pieceLength), targetPaint);
+                }
 
-                canvas.drawLine(currentPoint.x, currentPoint.y, target.end.x, (int) (currentPoint.y + pieceLength), targetPaint);
             }
             currentPoint.y +=pieceLength;
         }
