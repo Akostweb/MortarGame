@@ -4,11 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android1:title="настройки"
         android:id="@+id/action_settings"
         android1:icon="@mipmap/ic_launcher"
-        android:orderInCategory="100"
         app:showAsAction="ifRoom"
-        android:title="@string/action_settings"/>
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        android1:title="@string/action_settings" />
 
 </menu>
+

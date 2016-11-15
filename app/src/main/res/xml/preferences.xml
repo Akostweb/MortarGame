@@ -3,18 +3,17 @@
 
 
     <EditTextPreference
-        android:defaultValue="Default value"
-        android:id="@+id/editText1"
         android:selectAllOnFocus="true"
         android:inputType="number"
+        android:persistent="true"
         android:singleLine="true"
-        android:title="Edit text preference"
-        android:key="edit_text_preference_1" />
+        android:title="Amount of time"
+        android:key="pref_amountOfTime" />
     <EditTextPreference
-        android:id="@+id/editeText2"
-        android:defaultValue="Default value"
         android:selectAllOnFocus="true"
+        android:persistent="true"
         android:singleLine="true"
-        android:title="Edit text preference"
+        android:inputType="number"
+        android:title="pref_amountOfBlocks"
         android:key="edit_text_preference_2" />
 </PreferenceScreen>

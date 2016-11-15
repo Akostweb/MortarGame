@@ -34,7 +34,7 @@ public class MortarView extends SurfaceView implements SurfaceHolder.Callback {
     public static final int HIT_REWARD = 3;
 
     private boolean gameOver;
-    private double timeLeft;
+    private static double timeLeft;
     private int shotsFired;
     private double totalElapsedTime;
 
@@ -123,6 +123,15 @@ public class MortarView extends SurfaceView implements SurfaceHolder.Callback {
         backGroundPaint = new Paint();
     }
 
+    public void resetGame(){
+
+    }
+
+
+
+
+
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
@@ -174,6 +183,10 @@ public class MortarView extends SurfaceView implements SurfaceHolder.Callback {
         newGame();
     }
 
+    public static void timeNew(double time){
+        timeLeft = time;
+    }
+
     public void newGame() {
         for (int i = 0; i < TARGET_PIECES; i++){
             if (i%2 == 0) {
@@ -197,7 +210,9 @@ public class MortarView extends SurfaceView implements SurfaceHolder.Callback {
         blockerVelocity = initialBlockerVelocity;
         targetVelocity = initialTargetVelocity;
         target1Velocity = initialTargetVelocity;
-        timeLeft = 50;
+
+        if (timeLeft == 0)
+            timeLeft = 50;
         mortarBallOnScreen = false;
         shotsFired = 0;
         totalElapsedTime = 0.0;

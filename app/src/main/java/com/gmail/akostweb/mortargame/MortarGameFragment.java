@@ -1,13 +1,13 @@
 package com.gmail.akostweb.mortargame;
 
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-
+import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 
 
 /**
@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 
 public class MortarGameFragment extends Fragment
 {
+    private static double timeLeft;
     private MortarView mortarView; // custom view to display the game
 
 
@@ -58,4 +59,18 @@ public class MortarGameFragment extends Fragment
         super.onDestroy();
         mortarView.releaseResources();
     }
+
+    public void updateTime(SharedPreferences sharedPreferences){
+        String time = sharedPreferences.getString(MainActivity.TIME, null);
+        timeLeft = Double.parseDouble(time);
+        //Toast.makeText(getActivity(), "zna4enie"+timeLeft,Toast.LENGTH_LONG).show();
+        //Intent i = new Intent(this, MainActivity.class);
+        //i.putExtra("Value", time);
+        MortarView.timeNew(timeLeft);
+
+    }
+
+
+
+
 }
